@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './config/database.config';
+import { AutomapperModule } from '@automapper/nestjs';
+import { classes } from '@automapper/classes';
 
 @Module({
   imports: [
@@ -11,8 +11,9 @@ import { dataSourceOptions } from './config/database.config';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    AutomapperModule.forRoot({
+      strategyInitializer: classes(),
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
