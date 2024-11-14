@@ -19,7 +19,7 @@ export class File extends BaseEntity {
 
   @AutoMap()
   @Column({ type: 'bigint' })
-  size: string;
+  size: number;
 
   @AutoMap(() => [FileFolder])
   @OneToMany(() => FileFolder, (fileFolders) => fileFolders.files)

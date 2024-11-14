@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { FileRepository } from '../repositories/file.repository';
 import { FileCreateDTO } from './dtos/file-create.dto';
 import { FileUpdateDTO } from './dtos/file-update.dto';
@@ -27,36 +27,39 @@ export class FileService {
     };
   }
 
-  async createNewFile(fileDto: FileCreateDTO) {
-    const { name } = fileDto;
+  async uploadFile(file: Express.Multer.File) {
+    const { filename, path: filePath, size, mimetype } = file;
 
     const newFile = this.fileRepo.create({
-      name,
+      name: filename,
+      path: filePath,
+      type: mimetype,
+      size,
     });
 
     await this.fileRepo.save(newFile);
     return {
-      status: HttpStatus.CREATED,
-      message: 'Successfully created new data file',
+      status: HttpStatus.OK,
+      message: 'File uploaded successfully',
       data: newFile,
     };
   }
 
-  async updateFile(id: string, fileDto: FileUpdateDTO) {
-    const { name } = fileDto;
+  // async updateFile(id: string, fileDto: FileUpdateDTO) {
+  //   const { name } = fileDto;
 
-    const file = await this.fileRepo.findFileById(id);
-    await this.fileRepo.update(file.id, {
-      name,
-    });
+  //   const file = await this.fileRepo.findFileById(id);
+  //   await this.fileRepo.update(file.id, {
+  //     name,
+  //   });
 
-    const updatedFile = await this.fileRepo.findFileById(file.id);
-    return {
-      status: HttpStatus.OK,
-      message: 'Successfully updated data file',
-      data: updatedFile,
-    };
-  }
+  //   const updatedFile = await this.fileRepo.findFileById(file.id);
+  //   return {
+  //     status: HttpStatus.OK,
+  //     message: 'Successfully updated data file',
+  //     data: updatedFile,
+  //   };
+  // }
 
   async deleteFile(id: string) {
     const file = await this.fileRepo.findFileById(id);

@@ -6,12 +6,24 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileService } from '../services/file.service';
 import { FileReadDTO } from '../services/dtos/file-read.dto';
 import { FileCreateDTO } from '../services/dtos/file-create.dto';
 import { FileUpdateDTO } from '../services/dtos/file-update.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('file')
 @ApiTags('web - File')
@@ -40,6 +52,29 @@ export class FileController {
     return await this.fileService.getFileById(id);
   }
 
+  @Post('upload')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload data file' })
+  @ApiBody({ type: FileCreateDTO })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: '../../../uploads', // need to fix destination file
+        filename: (req, file, cb) => {
+          const filename = `${uuidv4()}${file.originalname}`;
+          cb(null, filename);
+        },
+      }),
+    }),
+  )
+  @ApiResponse({
+    status: 200,
+    description: 'File uploaded successfully',
+  })
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return await this.fileService.uploadFile(file);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create new file' })
   @ApiBody({ type: FileCreateDTO })
@@ -49,7 +84,7 @@ export class FileController {
     type: FileCreateDTO,
   })
   async addNewFile(@Body() fileCreateDTO: FileCreateDTO) {
-    return await this.fileService.createNewFile(fileCreateDTO);
+    // return await this.fileService.createNewFile(fileCreateDTO);
   }
 
   @Patch(':id')
@@ -64,7 +99,7 @@ export class FileController {
     @Param('id') id: string,
     @Body() fileUpdateDTO: FileUpdateDTO,
   ) {
-    return await this.fileService.updateFile(id, fileUpdateDTO);
+    // return await this.fileService.updateFile(id, fileUpdateDTO);
   }
 
   @Delete(':id')
