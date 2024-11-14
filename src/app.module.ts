@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './config/database.config';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
+import { FolderModule } from './api/folder/folder.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { classes } from '@automapper/classes';
     AutomapperModule.forRoot({
       strategyInitializer: classes(),
     }),
+    FolderModule,
   ],
 })
 export class AppModule {}
