@@ -11,6 +11,10 @@ export class File extends BaseEntity {
 
   @AutoMap()
   @Column({ type: 'varchar', length: 255, nullable: false })
+  original_name: string;
+
+  @AutoMap()
+  @Column({ type: 'varchar', length: 255, nullable: false })
   path: string;
 
   @AutoMap()
@@ -19,7 +23,7 @@ export class File extends BaseEntity {
 
   @AutoMap()
   @Column({ type: 'bigint' })
-  size: string;
+  size: number;
 
   @AutoMap(() => [FileFolder])
   @OneToMany(() => FileFolder, (fileFolders) => fileFolders.files)
