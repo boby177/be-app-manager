@@ -46,21 +46,21 @@ export class FileService {
     };
   }
 
-  // async updateFile(id: string, fileDto: FileUpdateDTO) {
-  //   const { name } = fileDto;
+  async updateFile(id: string, fileDto: FileUpdateDTO) {
+    const { name } = fileDto;
 
-  //   const file = await this.fileRepo.findFileById(id);
-  //   await this.fileRepo.update(file.id, {
-  //     name,
-  //   });
+    const file = await this.fileRepo.findFileById(id);
+    await this.fileRepo.update(file.id, {
+      name,
+    });
 
-  //   const updatedFile = await this.fileRepo.findFileById(file.id);
-  //   return {
-  //     status: HttpStatus.OK,
-  //     message: 'Successfully updated data file',
-  //     data: updatedFile,
-  //   };
-  // }
+    const updatedFile = await this.fileRepo.findFileById(file.id);
+    return {
+      status: HttpStatus.OK,
+      message: 'Successfully updated data file',
+      data: updatedFile,
+    };
+  }
 
   async deleteFile(id: string) {
     const file = await this.fileRepo.findFileById(id);

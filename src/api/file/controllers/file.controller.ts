@@ -80,18 +80,6 @@ export class FileController {
     return await this.fileService.uploadFile(file, fileDto);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Create new file' })
-  @ApiBody({ type: FileCreateDTO })
-  @ApiResponse({
-    status: 201,
-    description: 'Successfully created new file',
-    type: FileCreateDTO,
-  })
-  async addNewFile(@Body() fileCreateDTO: FileCreateDTO) {
-    // return await this.fileService.createNewFile(fileCreateDTO);
-  }
-
   @Patch(':id')
   @ApiOperation({ summary: 'Update data file' })
   @ApiBody({ type: FileUpdateDTO })
@@ -104,7 +92,7 @@ export class FileController {
     @Param('id') id: string,
     @Body() fileUpdateDTO: FileUpdateDTO,
   ) {
-    // return await this.fileService.updateFile(id, fileUpdateDTO);
+    return await this.fileService.updateFile(id, fileUpdateDTO);
   }
 
   @Delete(':id')
