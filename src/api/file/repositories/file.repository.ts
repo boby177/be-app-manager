@@ -21,11 +21,18 @@ export class FileRepository extends Repository<File> {
         select: {
           id: true,
           name: true,
+          original_name: true,
           path: true,
           size: true,
           type: true,
           created_at: true,
-          file_folders: true,
+          file_folders: {
+            folders: {
+              id: true,
+              name: true,
+              created_at: true,
+            },
+          },
         },
       });
 
@@ -46,11 +53,18 @@ export class FileRepository extends Repository<File> {
         select: {
           id: true,
           name: true,
+          original_name: true,
           path: true,
           size: true,
           type: true,
           created_at: true,
-          file_folders: true,
+          file_folders: {
+            folders: {
+              id: true,
+              name: true,
+              created_at: true,
+            },
+          },
         },
       });
 

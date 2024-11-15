@@ -28,13 +28,31 @@ export class FolderService {
   }
 
   async createNewFolder(folderDto: FolderCreateDTO) {
-    const { name } = folderDto;
+    const { name, id_folder } = folderDto;
 
     const newFolder = this.folderRepo.create({
       name,
     });
 
     await this.folderRepo.save(newFolder);
+
+    // Check if data id folder is not null
+    if (id_folder !== null) {
+      const relationFolder = await this.folderRepo.findFolderById(id_folder);
+
+      // Get all data sub folders
+      const subFolder = [];
+      for (const folder of relationFolder.sub_folder) {
+        subFolder.push(folder);
+      }
+
+      // Save data old sub folder and new folder
+      subFolder.push(newFolder);
+      relationFolder.sub_folder = subFolder;
+
+      await this.folderRepo.save(relationFolder);
+    }
+
     return {
       status: HttpStatus.CREATED,
       message: 'Successfully created new data folder',

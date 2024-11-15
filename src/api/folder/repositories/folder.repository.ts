@@ -22,7 +22,18 @@ export class FolderRepository extends Repository<Folder> {
           id: true,
           name: true,
           created_at: true,
-          folder_files: true,
+          // folder: true,
+          folder_files: {
+            files: {
+              id: true,
+              name: true,
+              original_name: true,
+              path: true,
+              size: true,
+              type: true,
+              created_at: true,
+            },
+          },
         },
       });
 
@@ -39,13 +50,25 @@ export class FolderRepository extends Repository<Folder> {
         where: { id },
         relations: {
           folder_files: true,
+          sub_folder: true,
         },
-        select: {
-          id: true,
-          name: true,
-          created_at: true,
-          folder_files: true,
-        },
+        // select: {
+        //   id: true,
+        //   name: true,
+        //   created_at: true,
+        //   folder: true,
+        //   folder_files: {
+        //     files: {
+        //       id: true,
+        //       name: true,
+        //       original_name: true,
+        //       path: true,
+        //       size: true,
+        //       type: true,
+        //       created_at: true,
+        //     },
+        //   },
+        // },
       });
 
       if (!folder) {
