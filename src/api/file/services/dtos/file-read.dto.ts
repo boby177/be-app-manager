@@ -14,6 +14,10 @@ export class FileReadDTO extends BaseEntity {
 
   @ApiProperty()
   @AutoMap()
+  original_name: string;
+
+  @ApiProperty()
+  @AutoMap()
   path: string;
 
   @ApiProperty()

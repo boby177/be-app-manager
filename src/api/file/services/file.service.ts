@@ -27,11 +27,12 @@ export class FileService {
     };
   }
 
-  async uploadFile(file: Express.Multer.File) {
+  async uploadFile(file: Express.Multer.File, fileDto: FileCreateDTO) {
     const { filename, path: filePath, size, mimetype } = file;
 
     const newFile = this.fileRepo.create({
-      name: filename,
+      name: fileDto.name,
+      original_name: filename,
       path: filePath,
       type: mimetype,
       size,

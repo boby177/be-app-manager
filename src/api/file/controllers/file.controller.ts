@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -59,9 +61,9 @@ export class FileController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: '../../../uploads', // need to fix destination file
+        destination: './file-uploads',
         filename: (req, file, cb) => {
-          const filename = `${uuidv4()}${file.originalname}`;
+          const filename = `${uuidv4()}-${file.originalname}`;
           cb(null, filename);
         },
       }),
@@ -71,8 +73,11 @@ export class FileController {
     status: 200,
     description: 'File uploaded successfully',
   })
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return await this.fileService.uploadFile(file);
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() fileDto: FileCreateDTO,
+  ) {
+    return await this.fileService.uploadFile(file, fileDto);
   }
 
   @Post()

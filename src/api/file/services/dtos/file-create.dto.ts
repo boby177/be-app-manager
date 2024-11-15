@@ -5,6 +5,11 @@ import { IsNotEmpty } from 'class-validator';
 export class FileCreateDTO {
   @IsNotEmpty()
   @ApiProperty({
+    description: 'File name',
+  })
+  name: string;
+
+  @ApiProperty({
     description: 'File',
     type: 'string',
     format: 'binary',
