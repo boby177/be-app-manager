@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Folder } from '../entities/folder.entity';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class FolderRepository extends Repository<Folder> {
@@ -12,31 +13,17 @@ export class FolderRepository extends Repository<Folder> {
     super(Folder, dataSource.createEntityManager());
   }
 
-  async findAllFolders() {
+  async findAllFolders(query: PaginateQuery): Promise<Paginated<Folder>> {
     try {
-      const folders = await this.find({
+      const folders = await paginate(query, this, {
+        sortableColumns: ['name', 'created_at'],
+        searchableColumns: ['name', 'created_at'],
+        maxLimit: 9999999,
         relations: {
           folder_files: {
             files: true,
           },
           sub_folder: true,
-        },
-        select: {
-          id: true,
-          name: true,
-          created_at: true,
-          folder_files: {
-            id: true,
-            files: {
-              id: true,
-              name: true,
-              original_name: true,
-              path: true,
-              size: true,
-              type: true,
-              created_at: true,
-            },
-          },
         },
       });
 
@@ -73,6 +60,37 @@ export class FolderRepository extends Repository<Folder> {
               created_at: true,
             },
           },
+        },
+      });
+
+      if (!folder) {
+        throw new NotFoundException('Folder not found');
+      }
+
+      return folder;
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException(error.message);
+    }
+  }
+
+  async findFolderByIdPaginated(
+    id: string,
+    query: PaginateQuery,
+  ): Promise<Paginated<Folder>> {
+    try {
+      const folder = await paginate(query, this, {
+        where: {
+          id,
+        },
+        sortableColumns: ['name', 'created_at'],
+        searchableColumns: ['name', 'created_at'],
+        maxLimit: 9999999,
+        relations: {
+          folder_files: {
+            files: true,
+          },
+          sub_folder: true,
         },
       });
 

@@ -2,13 +2,14 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { FolderRepository } from '../repositories/folder.repository';
 import { FolderCreateDTO } from './dtos/folder-create.dto';
 import { FolderUpdateDTO } from './dtos/folder-update.dto';
+import { PaginateQuery } from 'nestjs-paginate';
 
 @Injectable()
 export class FolderService {
   constructor(private readonly folderRepo: FolderRepository) {}
 
-  async getAllFolders() {
-    const folders = await this.folderRepo.findAllFolders();
+  async getAllFolders(query: PaginateQuery) {
+    const folders = await this.folderRepo.findAllFolders(query);
 
     return {
       status: HttpStatus.OK,
@@ -17,13 +18,37 @@ export class FolderService {
     };
   }
 
-  async getFolderById(id: string) {
-    const folders = await this.folderRepo.findFolderById(id);
+  async getFolderById(id: string, query: PaginateQuery) {
+    const folders = await this.folderRepo.findFolderByIdPaginated(id, query);
+
+    // Mapping data folder files
+    const files = [];
+    for (const data of folders.data[0].folder_files) {
+      const file = {
+        id: data.files.id,
+        name: data.files.name,
+        original_name: data.files.original_name,
+        path: data.files.path,
+        type: data.files.type,
+        size: data.files.size,
+        created_at: data.files.created_at,
+      };
+
+      files.push(file);
+    }
+
+    const response = {
+      id: folders.data[0].id,
+      name: folders.data[0].name,
+      created_at: folders.data[0].created_at,
+      sub_folder: folders.data[0].sub_folder,
+      folder_files: files,
+    };
 
     return {
       status: HttpStatus.OK,
       message: 'Successfully get data folders',
-      data: folders,
+      data: response,
     };
   }
 

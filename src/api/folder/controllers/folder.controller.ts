@@ -12,6 +12,7 @@ import { FolderService } from '../services/folder.service';
 import { FolderReadDTO } from '../services/dtos/folder-read.dto';
 import { FolderCreateDTO } from '../services/dtos/folder-create.dto';
 import { FolderUpdateDTO } from '../services/dtos/folder-update.dto';
+import { Paginate, PaginatedSwaggerDocs, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('folder')
 @ApiTags('web - Folder')
@@ -25,8 +26,13 @@ export class FolderController {
     description: 'Successfully get data folder',
     type: FolderReadDTO,
   })
-  async findAll() {
-    return await this.folderService.getAllFolders();
+  @PaginatedSwaggerDocs(FolderReadDTO, {
+    sortableColumns: ['name', 'created_at'],
+    searchableColumns: ['name', 'created_at'],
+    maxLimit: 9999999,
+  })
+  async findAll(@Paginate() query: PaginateQuery) {
+    return await this.folderService.getAllFolders(query);
   }
 
   @Get(':id')
@@ -36,8 +42,13 @@ export class FolderController {
     description: 'Successfully get data folder',
     type: FolderReadDTO,
   })
-  async findOne(@Param('id') id: string) {
-    return await this.folderService.getFolderById(id);
+  @PaginatedSwaggerDocs(FolderReadDTO, {
+    sortableColumns: ['name', 'created_at'],
+    searchableColumns: ['name', 'created_at'],
+    maxLimit: 9999999,
+  })
+  async findOne(@Param('id') id: string, @Paginate() query: PaginateQuery) {
+    return await this.folderService.getFolderById(id, query);
   }
 
   @Post()
