@@ -57,6 +57,12 @@ export class FileController {
   @Post('upload')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload data file' })
+  @ApiQuery({
+    name: 'folder',
+    type: 'string',
+    required: false,
+    description: 'Folder Id',
+  })
   @ApiBody({ type: FileCreateDTO })
   @UseInterceptors(
     FileInterceptor('file', {
@@ -74,10 +80,11 @@ export class FileController {
     description: 'File uploaded successfully',
   })
   async uploadFile(
+    @Query('folder') folder: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() fileDto: FileCreateDTO,
   ) {
-    return await this.fileService.uploadFile(file, fileDto);
+    return await this.fileService.uploadFile(file, fileDto, folder);
   }
 
   @Patch(':id')

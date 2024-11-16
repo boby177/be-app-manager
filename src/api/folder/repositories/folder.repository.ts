@@ -16,14 +16,17 @@ export class FolderRepository extends Repository<Folder> {
     try {
       const folders = await this.find({
         relations: {
-          folder_files: true,
+          folder_files: {
+            files: true,
+          },
+          sub_folder: true,
         },
         select: {
           id: true,
           name: true,
           created_at: true,
-          // folder: true,
           folder_files: {
+            id: true,
             files: {
               id: true,
               name: true,
@@ -49,26 +52,28 @@ export class FolderRepository extends Repository<Folder> {
       const folder = await this.findOne({
         where: { id },
         relations: {
-          folder_files: true,
+          folder_files: {
+            files: true,
+          },
           sub_folder: true,
         },
-        // select: {
-        //   id: true,
-        //   name: true,
-        //   created_at: true,
-        //   folder: true,
-        //   folder_files: {
-        //     files: {
-        //       id: true,
-        //       name: true,
-        //       original_name: true,
-        //       path: true,
-        //       size: true,
-        //       type: true,
-        //       created_at: true,
-        //     },
-        //   },
-        // },
+        select: {
+          id: true,
+          name: true,
+          created_at: true,
+          folder_files: {
+            id: true,
+            files: {
+              id: true,
+              name: true,
+              original_name: true,
+              path: true,
+              size: true,
+              type: true,
+              created_at: true,
+            },
+          },
+        },
       });
 
       if (!folder) {
